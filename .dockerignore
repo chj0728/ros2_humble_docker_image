@@ -1,0 +1,34 @@
+# Git相关
+.git
+.gitignore
+
+# 文档
+README.md
+*.md
+
+# 脚本文件
+build.sh
+run.sh
+
+# 工作空间目录（会在运行时挂载）
+workspace/
+home/
+
+# Docker相关
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 临时文件
+*.tmp
+*.log
+
+# IDE相关
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db 
