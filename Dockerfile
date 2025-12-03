@@ -40,6 +40,7 @@ RUN apt-get install -y \
     python3-vcstool \
     build-essential \
     cmake \
+    vim \
     git \
     python3-pip \
     && rm -rf /var/lib/apt/lists/*
@@ -55,6 +56,10 @@ WORKDIR /ros2_ws
 
 # 设置ROS2环境
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+
+# 设置colcon自动补全
+RUN echo "source /usr/share/colcon_cd/function/colcon_cd-argcomplete.bash" >> ~/.bashrc
+RUN echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> ~/.bashrc
 
 # 创建启动脚本
 RUN echo '#!/bin/bash\n\

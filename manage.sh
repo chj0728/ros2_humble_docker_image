@@ -30,17 +30,19 @@ check_container_status() {
 }
 
 build_image() {
+
+    IMAGE_NAME=${1:-"ros2-humble:latest"}
     echo "🔨 构建ROS2 Humble Docker镜像..."
     
     # 创建必要的目录
     mkdir -p workspace home
     
     # 构建Docker镜像
-    docker build -t ros2-humble:latest .
+    docker build -t "$IMAGE_NAME" .
     
     if [ $? -eq 0 ]; then
         echo "✅ Docker镜像构建成功！"
-        echo "镜像名称: ros2-humble:latest"
+        echo "镜像名称: $IMAGE_NAME"
     else
         echo "❌ Docker镜像构建失败！"
         exit 1
@@ -48,11 +50,13 @@ build_image() {
 }
 
 start_container() {
-    echo "🚀 启动ROS2 Humble容器..."
+    IMAGE_NAME=${1:-"ros2-humble:latest"}
+    echo "🚀 基于镜像 $IMAGE_NAME 启动ROS2 Humble容器..."
     
     # 检查镜像是否存在
-    if ! docker image inspect ros2-humble:latest >/dev/null 2>&1; then
-        echo "❌ 镜像不存在，请先运行 ./manage.sh build 构建镜像"
+    if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
+        echo "❌ 镜像不存在，请先运行 ./manage.sh build $IMAGE_NAME 构建镜像"
+        echo "▶️  或者运行 docker image ls 查看可用镜像"
         exit 1
     fi
     
@@ -69,6 +73,9 @@ start_container() {
     
     # 创建必要的目录
     mkdir -p workspace home
+
+    # 允许X11连接
+    xhost +local:docker
     
     # 启动容器，将当前目录映射到容器内的/workspace
     echo "启动容器，映射当前目录到 /workspace..."
@@ -82,7 +89,7 @@ start_container() {
         -v "$CURRENT_DIR:/workspace" \
         -v "$CURRENT_DIR/home:/home/ros" \
         -w /workspace \
-        ros2-humble:latest \
+        "$IMAGE_NAME" \
         tail -f /dev/null
     
     if [ $? -eq 0 ]; then
@@ -149,10 +156,12 @@ exec bash
 
 case "$1" in
     "build")
-        build_image
+        image_name="$2"
+        build_image $image_name
         ;;
     "start")
-        start_container
+        image_name="$2"
+        start_container $image_name
         ;;
     "stop")
         stop_container
