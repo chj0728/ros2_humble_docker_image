@@ -81,7 +81,7 @@ start_container() {
     echo "启动容器，映射当前目录到 /workspace..."
     docker run -d \
         --rm \
-        --user $(id -u):$(id -g) \
+        # --user $(id -u):$(id -g) \
         --name ros2-humble-container \
         --network host \
         --privileged \
